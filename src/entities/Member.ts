@@ -1,5 +1,5 @@
 import { PrimaryKey, Index, Cascade, Collection, Entity, ManyToMany, ManyToOne, Property, BaseEntity } from '@mikro-orm/core';
-import { MembershipType } from 'src/members/member.data';
+import { CreateMemberDto, MembershipType } from 'src/members/member.data';
 import { ulid } from 'ulid';
 
 @Entity({ tableName: "members" })
@@ -36,18 +36,17 @@ export class Member extends BaseEntity<Member, 'id'> {
     membershipType: string = MembershipType.Pending;
 
     @Property({ nullable: true })
-    membershipApprovedAt?: Date;
+    membershipApprovedAt?: Date = undefined;
 
-    // TODO: Do I need a constructor?
-    // constructor(emailAddress: string, mobileNumber: string, firstName: string, familyName: string, address: string, country: string, agreedValues: boolean, memberType: MembershipType, membershipApprovedAt?: Date) {
-    //     this.emailAddress = emailAddress;
-    //     this.mobileNumber = mobileNumber;
-    //     this.firstName = firstName;
-    //     this.familyName = familyName;
-    //     this.address = address;
-    //     this.country = country;
-    //     this.agreedToValues = agreedValues;
-    //     this.membershipType = memberType;
-    //     this.membershipApprovedAt = membershipApprovedAt;
-    // }
+    constructor(dto: CreateMemberDto) {
+        super();
+        this.emailAddress = dto.emailAddress;
+        this.mobileNumber = dto.mobileNumber;
+        this.firstName = dto.firstName;
+        this.familyName = dto.familyName;
+        this.address = dto.address;
+        this.country = dto.country;
+        this.agreedToValues = dto.agreedToValues;
+        // Note it's missing the app submitted at and membership type fields; they will take the defaults
+    }
 }
