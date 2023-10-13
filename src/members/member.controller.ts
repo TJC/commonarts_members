@@ -16,18 +16,25 @@ export class MemberController {
     ) { }
 
     @Post()
-    async createMember(@Body() createMemberDto: CreateMemberDto) {
+    async createMember(@Body() createMemberDto: CreateMemberDto, @Res({ passthrough: true }) response: Response) {
+        if (createMemberDto.emailAddress.trim().length == 0) {
+            response.status(400);
+            return { error: "Empty email address" };
+        }
         // checks to see if member already exists with this email address -- if so, emails them with reminder.
         // if it's a new member, then insert into database.
-        // const memberId = ulid();
-        // this.em.create(Member, {
+        const dupMember = await this.em.find(Member, { emailAddress: createMemberDto.emailAddress.trim() });
+        if (dupMember != undefined) {
+            return { error: "Member already exists" };
+        }
+
         const m = new Member({
-            emailAddress: createMemberDto.emailAddress,
-            mobileNumber: createMemberDto.mobileNumber,
-            firstName: createMemberDto.firstName,
-            familyName: createMemberDto.familyName,
-            address: createMemberDto.address,
-            country: createMemberDto.country,
+            emailAddress: createMemberDto.emailAddress.trim(),
+            mobileNumber: createMemberDto.mobileNumber.trim(),
+            firstName: createMemberDto.firstName.trim(),
+            familyName: createMemberDto.familyName.trim(),
+            address: createMemberDto.address.trim(),
+            country: createMemberDto.country.trim(),
             agreedToValues: createMemberDto.agreedToValues,
         });
         await this.em.persistAndFlush(m);
