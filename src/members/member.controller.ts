@@ -17,15 +17,12 @@ export class MemberController {
 
     @Post()
     async createMember(@Body() createMemberDto: CreateMemberDto, @Res({ passthrough: true }) response: Response) {
-        if (createMemberDto.emailAddress.trim().length == 0) {
-            response.status(400);
-            return { error: "Empty email address" };
-        }
         // checks to see if member already exists with this email address -- if so, emails them with reminder.
         // if it's a new member, then insert into database.
         const dupMember = await this.em.find(Member, { emailAddress: createMemberDto.emailAddress.trim() });
-        if (dupMember != undefined) {
-            return { error: "Member already exists" };
+        if (dupMember.length > 0) {
+            response.status(400);
+            return { error: `Member already exists with id ${dupMember[0].id}` };
         }
 
         const m = new Member({
