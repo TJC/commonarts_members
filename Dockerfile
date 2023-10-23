@@ -16,6 +16,7 @@ FROM node:20-alpine as prod
 RUN apk add --no-cache dumb-init
 
 ENV NODE_ENV=production
+ENV PUBLIC_ASSETS=/app/public
 ARG PORT=3000
 ENV PORT=$PORT
 EXPOSE $PORT
@@ -27,6 +28,7 @@ WORKDIR /app
 COPY --from=base --chown=node:node /app/node_modules ./node_modules
 COPY --from=base --chown=node:node /app/*.json ./
 COPY --from=build --chown=node:node /app/dist ./dist/
+COPY --chown=node:node ./public/ /app/public/
 
 USER node
 CMD ["dumb-init", "node", "dist/main.js"]

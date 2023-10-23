@@ -6,7 +6,8 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.useStaticAssets(join(__dirname, "..", "public"));
+  const publicAssetsDir = process.env["PUBLIC_ASSETS"] || join(__dirname, "..", "public");
+  app.useStaticAssets(publicAssetsDir);
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
 }
