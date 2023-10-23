@@ -2,6 +2,8 @@
 function memberCreated(data) {
     document.querySelector("#submissionForm").classList.add("invisible");
     document.querySelector("#successResult").classList.remove("invisible");
+    document.querySelector("#successResult").style.display = "";
+    window.scrollTo(0, 0);
 }
 
 function textAlert(message) {
@@ -39,6 +41,8 @@ function initialSetup() {
     });
 
     document.querySelector("#formSubmitBtn").addEventListener('click', onSubmitClickHandler);
+
+    document.querySelector("#successResult").style.display = "none";
 }
 
 function thingIsCheckedOrElse(inputName, orElse) {

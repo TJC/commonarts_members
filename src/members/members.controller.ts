@@ -10,9 +10,11 @@ import { Response } from 'express';
 export class MembersController {
     constructor(private membersService: MembersService, private readonly orm: MikroORM, private readonly em: EntityManager) { }
 
-    @Get()
+    @Get("approved")
     async listMembers(): Promise<Array<Member>> {
-        const memberList = await this.em.find(Member, {}, { orderBy: { applicationSubmittedAt: QueryOrder.ASC } });
+        const memberList = await this.em.find(Member, {
+            membershipType: [MembershipType.RegularMember, MembershipType.SpecialMember]
+        }, { orderBy: { applicationSubmittedAt: QueryOrder.ASC } });
         return memberList;
     }
 
@@ -25,6 +27,7 @@ export class MembersController {
     }
 
     // Approve membership applications
+    // Note that at the moment this is pretty simple; doesn't really handle any error conditions
     @Put("approve")
     async approveMembers(@Body() memberIds: Array<string>, @Res({ passthrough: true }) response: Response) {
         // Takes an array of member ids to approve
@@ -58,9 +61,11 @@ export class MembersController {
         else {
             member.membershipType = MembershipType.RegularMember;
             member.membershipApprovedAt = new Date();
-            // TODO: Also update Mailchimp
+            // TODO: Also update Mailchimp etc
             console.log(`Successfully approved member id ${memberId}: ${member.emailAddress}`);
+
         }
-        this.em.flush();
+        // Potentially you'd call flush() at the end of approveMembers() instead
+        await this.em.flush();
     }
 }
