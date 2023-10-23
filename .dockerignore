@@ -1,0 +1,6 @@
+Dockerfile
+.dockerignore
+membersDb.sqlite3
+node_modules
+dist
+
