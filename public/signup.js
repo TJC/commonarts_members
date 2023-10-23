@@ -61,7 +61,7 @@ function captchaCheckIsGood() {
 }
 
 function valuesCheckIsGood() {
-    return thingIsCheckedOrElse("captcha", () =>
+    return thingIsCheckedOrElse("agreedToValues", () =>
         textAlert("Your membership will not be accepted if you refuse to accept the values!")
     );
 }
